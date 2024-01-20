@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go/format"
+	"gopkg.in/alecthomas/kingpin.v2"
 	"io/ioutil"
 	"log"
 	"os"
@@ -13,8 +14,6 @@ import (
 	"sort"
 	"strings"
 	"unicode"
-
-	"gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/gedex/inflector"
 	"github.com/idubinskiy/schematyper/stringset"
@@ -73,8 +72,12 @@ type goType struct {
 func (gt goType) print(buf *bytes.Buffer) {
 	if gt.Comment != "" {
 		commentLines := strings.Split(gt.Comment, "\n")
-		for _, line := range commentLines {
-			buf.WriteString(fmt.Sprintf("// %s\n", line))
+		for i, line := range commentLines {
+			if i == 0 {
+				buf.WriteString(fmt.Sprintf("// %s %s\n", gt.Name, line))
+			} else {
+				buf.WriteString(fmt.Sprintf("// %s\n", line))
+			}
 		}
 	}
 	typeStr := gt.TypePrefix
